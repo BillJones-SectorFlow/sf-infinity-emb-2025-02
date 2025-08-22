@@ -21,9 +21,9 @@ COPY requirements.txt /requirements.txt
 
 RUN /usr/bin/python3 -m pip install --upgrade pip
 
-# Install torch with CUDA 12.4 support.  Pinning a specific version ensures
+# Install torch with CUDA 12.1 support.  Pinning a specific version ensures
 # deterministic builds.  Keep this in sync with the underlying CUDA version.
-RUN /usr/bin/python3 -m pip install --no-cache-dir torch==2.5.1 --index-url https://download.pytorch.org/whl/cu124
+RUN /usr/bin/python3 -m pip install --no-cache-dir torch==2.5.1 --index-url https://download.pytorch.org/whl/cu121
 
 # Install the remaining Python dependencies.  The --no-cache-dir flag
 # prevents pip from caching wheels inside the image.

@@ -1,4 +1,4 @@
-runpod~=1.7.0
+runpod>=1.7.13
 infinity-emb[all] @ git+https://github.com/wirthual/infinity.git@add-version-check#subdirectory=libs/infinity_emb
 einops
 git+https://github.com/pytorch-labs/float8_experimental.git
