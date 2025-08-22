@@ -80,7 +80,7 @@ async def async_generator_handler(job: Dict[str, Any]):
             call_fn = embedding_service.infinity_rerank
             kwargs = {
                 "query": openai_input.get("query"),
-                "docs": openai_input.get("docs"),
+                "docs": openai_input.get("docs") or openai_input.get("documents"),  # Handle both 'docs' and 'documents'
                 "return_docs": openai_input.get("return_docs"),
                 "model_name": model_name,
             }
@@ -91,13 +91,22 @@ async def async_generator_handler(job: Dict[str, Any]):
     else:
         # Standard reranking or embedding request
         if job_input.get("query"):
+            # Handle both 'docs' and 'documents' keys for backward compatibility
+            docs = job_input.get("docs") or job_input.get("documents")
+            
+            # Validate that we have documents
+            if docs is None:
+                yield create_error_response("Missing 'docs' or 'documents' field in request").model_dump()
+                return
+            
             call_fn = embedding_service.infinity_rerank
             kwargs = {
                 "query": job_input.get("query"),
-                "docs": job_input.get("docs"),
+                "docs": docs,  # Use the extracted docs (from either 'docs' or 'documents')
                 "return_docs": job_input.get("return_docs"),
                 "model_name": job_input.get("model"),
             }
+            logger.info(f"Handler: Rerank kwargs: {kwargs}")
         elif job_input.get("input"):
             # Shortcut for embedding-only calls via the standard route
             call_fn = embedding_service.route_openai_get_embeddings
@@ -175,6 +184,3 @@ if __name__ == "__main__":
             "return_aggregate_stream": True,
         }
     )
-
-
-
